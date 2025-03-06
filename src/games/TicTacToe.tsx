@@ -129,7 +129,7 @@ function TicTacToe() {
       }
     }
 
-    return bestMove; // Return the best move for AI
+    return bestMove; 
   };
 
   useEffect(() => {
