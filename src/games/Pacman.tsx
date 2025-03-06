@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 const GRID_SIZE = 15;
 const CELL_SIZE = 30;
 
 type Position = { x: number; y: number };
-type Direction = 'up' | 'down' | 'left' | 'right';
+type Direction = "up" | "down" | "left" | "right";
 
 const INITIAL_PACMAN: Position = { x: 7, y: 11 };
 const INITIAL_GHOSTS: Position[] = [
   { x: 1, y: 1 },
   { x: 13, y: 1 },
   { x: 1, y: 13 },
-  { x: 13, y: 13 }
+  { x: 13, y: 13 },
 ];
 
 const WALLS = [
@@ -21,18 +21,29 @@ const WALLS = [
   ...Array.from({ length: GRID_SIZE }, (_, i) => ({ x: 0, y: i })),
   ...Array.from({ length: GRID_SIZE }, (_, i) => ({ x: GRID_SIZE - 1, y: i })),
   // Inner obstacles
-  { x: 3, y: 3 }, { x: 4, y: 3 }, { x: 5, y: 3 },
-  { x: 9, y: 3 }, { x: 10, y: 3 }, { x: 11, y: 3 },
-  { x: 3, y: 11 }, { x: 4, y: 11 }, { x: 5, y: 11 },
-  { x: 9, y: 11 }, { x: 10, y: 11 }, { x: 11, y: 11 },
-  { x: 7, y: 5 }, { x: 7, y: 6 }, { x: 7, y: 7 },
-  { x: 7, y: 9 }, { x: 7, y: 8 }
+  { x: 3, y: 3 },
+  { x: 4, y: 3 },
+  { x: 5, y: 3 },
+  { x: 9, y: 3 },
+  { x: 10, y: 3 },
+  { x: 11, y: 3 },
+  { x: 3, y: 11 },
+  { x: 4, y: 11 },
+  { x: 5, y: 11 },
+  { x: 9, y: 11 },
+  { x: 10, y: 11 },
+  { x: 11, y: 11 },
+  { x: 7, y: 5 },
+  { x: 7, y: 6 },
+  { x: 7, y: 7 },
+  { x: 7, y: 9 },
+  { x: 7, y: 8 },
 ];
 
 function Pacman() {
   const [pacman, setPacman] = useState<Position>(INITIAL_PACMAN);
   const [ghosts, setGhosts] = useState<Position[]>(INITIAL_GHOSTS);
-  const [direction, setDirection] = useState<Direction>('right');
+  const [direction, setDirection] = useState<Direction>("right");
   const [score, setScore] = useState(0);
   const [dots, setDots] = useState<Position[]>([]);
   const [gameOver, setGameOver] = useState(false);
@@ -42,7 +53,7 @@ function Pacman() {
     const newDots: Position[] = [];
     for (let x = 1; x < GRID_SIZE - 1; x++) {
       for (let y = 1; y < GRID_SIZE - 1; y++) {
-        if (!WALLS.some(wall => wall.x === x && wall.y === y)) {
+        if (!WALLS.some((wall) => wall.x === x && wall.y === y)) {
           newDots.push({ x, y });
         }
       }
@@ -55,20 +66,21 @@ function Pacman() {
   }, [initializeDots]);
 
   const isWall = (pos: Position) => {
-    return WALLS.some(wall => wall.x === pos.x && wall.y === pos.y);
+    return WALLS.some((wall) => wall.x === pos.x && wall.y === pos.y);
   };
 
   const moveGhosts = useCallback(() => {
-    setGhosts(currentGhosts => {
-      return currentGhosts.map(ghost => {
+    setGhosts((currentGhosts) => {
+      return currentGhosts.map((ghost) => {
         const possibleMoves = [
           { x: ghost.x + 1, y: ghost.y },
           { x: ghost.x - 1, y: ghost.y },
           { x: ghost.x, y: ghost.y + 1 },
-          { x: ghost.x, y: ghost.y - 1 }
-        ].filter(pos => !isWall(pos));
+          { x: ghost.x, y: ghost.y - 1 },
+        ].filter((pos) => !isWall(pos));
 
-        const randomMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+        const randomMove =
+          possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
         return randomMove || ghost;
       });
     });
@@ -77,10 +89,10 @@ function Pacman() {
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       const directions: { [key: string]: Direction } = {
-        ArrowUp: 'up',
-        ArrowDown: 'down',
-        ArrowLeft: 'left',
-        ArrowRight: 'right'
+        ArrowUp: "up",
+        ArrowDown: "down",
+        ArrowLeft: "left",
+        ArrowRight: "right",
       };
 
       if (directions[e.key]) {
@@ -88,21 +100,29 @@ function Pacman() {
       }
     };
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, []);
 
   useEffect(() => {
     if (gameOver || gameWon) return;
 
     const moveInterval = setInterval(() => {
-      setPacman(current => {
+      setPacman((current) => {
         const newPos = { ...current };
         switch (direction) {
-          case 'up': newPos.y--; break;
-          case 'down': newPos.y++; break;
-          case 'left': newPos.x--; break;
-          case 'right': newPos.x++; break;
+          case "up":
+            newPos.y--;
+            break;
+          case "down":
+            newPos.y++;
+            break;
+          case "left":
+            newPos.x--;
+            break;
+          case "right":
+            newPos.x++;
+            break;
         }
 
         if (isWall(newPos)) return current;
@@ -117,12 +137,14 @@ function Pacman() {
 
   useEffect(() => {
     // Check for dot collection
-    const dotIndex = dots.findIndex(dot => dot.x === pacman.x && dot.y === pacman.y);
+    const dotIndex = dots.findIndex(
+      (dot) => dot.x === pacman.x && dot.y === pacman.y
+    );
     if (dotIndex !== -1) {
       const newDots = [...dots];
       newDots.splice(dotIndex, 1);
       setDots(newDots);
-      setScore(s => s + 10);
+      setScore((s) => s + 10);
 
       if (newDots.length === 0) {
         setGameWon(true);
@@ -130,7 +152,7 @@ function Pacman() {
     }
 
     // Check for ghost collision
-    if (ghosts.some(ghost => ghost.x === pacman.x && ghost.y === pacman.y)) {
+    if (ghosts.some((ghost) => ghost.x === pacman.x && ghost.y === pacman.y)) {
       setGameOver(true);
     }
   }, [pacman, ghosts, dots]);
@@ -138,7 +160,7 @@ function Pacman() {
   const resetGame = () => {
     setPacman(INITIAL_PACMAN);
     setGhosts(INITIAL_GHOSTS);
-    setDirection('right');
+    setDirection("right");
     setScore(0);
     setGameOver(false);
     setGameWon(false);
@@ -156,7 +178,7 @@ function Pacman() {
         className="relative bg-gray-800 border-2 border-purple-500"
         style={{
           width: GRID_SIZE * CELL_SIZE,
-          height: GRID_SIZE * CELL_SIZE
+          height: GRID_SIZE * CELL_SIZE,
         }}
       >
         {/* Walls */}
@@ -168,7 +190,7 @@ function Pacman() {
               width: CELL_SIZE,
               height: CELL_SIZE,
               left: wall.x * CELL_SIZE,
-              top: wall.y * CELL_SIZE
+              top: wall.y * CELL_SIZE,
             }}
           />
         ))}
@@ -182,7 +204,7 @@ function Pacman() {
               width: CELL_SIZE / 4,
               height: CELL_SIZE / 4,
               left: dot.x * CELL_SIZE + CELL_SIZE / 2.5,
-              top: dot.y * CELL_SIZE + CELL_SIZE / 2.5
+              top: dot.y * CELL_SIZE + CELL_SIZE / 2.5,
             }}
           />
         ))}
@@ -194,7 +216,7 @@ function Pacman() {
             width: CELL_SIZE - 4,
             height: CELL_SIZE - 4,
             left: pacman.x * CELL_SIZE + 2,
-            top: pacman.y * CELL_SIZE + 2
+            top: pacman.y * CELL_SIZE + 2,
           }}
         />
 
@@ -207,7 +229,7 @@ function Pacman() {
               width: CELL_SIZE - 4,
               height: CELL_SIZE - 4,
               left: ghost.x * CELL_SIZE + 2,
-              top: ghost.y * CELL_SIZE + 2
+              top: ghost.y * CELL_SIZE + 2,
             }}
           />
         ))}
@@ -215,9 +237,7 @@ function Pacman() {
 
       {(gameOver || gameWon) && (
         <div className="mt-4 text-center">
-          <p className="text-2xl mb-2">
-            {gameWon ? 'You Won!' : 'Game Over!'}
-          </p>
+          <p className="text-2xl mb-2">{gameWon ? "You Won!" : "Game Over!"}</p>
           <button
             onClick={resetGame}
             className="px-4 py-2 bg-purple-600 rounded hover:bg-purple-700"
@@ -228,9 +248,7 @@ function Pacman() {
       )}
 
       <div className="mt-4 text-center">
-        <p className="text-sm text-gray-400">
-          Use arrow keys to move
-        </p>
+        <p className="text-sm text-gray-400">Use arrow keys to move</p>
       </div>
     </div>
   );

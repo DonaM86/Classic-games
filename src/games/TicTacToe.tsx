@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Trophy, RotateCcw } from "lucide-react";
 
 type Player = "X" | "O";
@@ -16,8 +16,6 @@ const WINNING_COMBINATIONS = [
   [0, 4, 8],
   [2, 4, 6], // Diagonals
 ];
-
-const WINNING_ANIMATIONS = ["animate-bounce", "animate-pulse", "animate-spin"];
 
 const AI_INSULTS = [
   "Ha! You thought you had a chance?",
@@ -129,7 +127,7 @@ function TicTacToe() {
       }
     }
 
-    return bestMove; 
+    return bestMove;
   };
 
   useEffect(() => {
@@ -140,6 +138,7 @@ function TicTacToe() {
       }, 500);
       return () => clearTimeout(timer);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPlayer, gameMode]);
 
   const handleClick = (index: number) => {
